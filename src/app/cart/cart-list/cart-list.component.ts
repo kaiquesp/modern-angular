@@ -1,21 +1,28 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { Component, OnInit } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
-import { CartItemComponent } from '../cart-item/cart-item.component';
+import { CartItem } from '../cart-item';
 import { CartService } from '../cart.service';
+import { CartItemComponent } from '../cart-item/cart-item.component';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 
 @Component({
-  selector: 'app-cart-list',
-  templateUrl: './cart-list.component.html',
-  styleUrls: ['./cart-list.component.scss'],
-  standalone: true,
-  imports: [MatCardModule, CartItemComponent, AsyncPipe]
+    selector: 'app-cart-list',
+    templateUrl: './cart-list.component.html',
+    styleUrls: ['./cart-list.component.scss'],
+    standalone: true,
+    imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, CartItemComponent, AsyncPipe]
 })
-export class CartListComponent {
+export class CartListComponent implements OnInit {
 
-  private cartService = inject(CartService);
+  cartItems$: Observable<CartItem[]> = of([]);
+  cartTotal = 0;
 
-  cartItems = this.cartService.cartItems;
+  constructor(private cartService: CartService) {
+  }
 
+  ngOnInit() {
+    this.cartItems$ = this.cartService.getCartItems();
+  }
 }
